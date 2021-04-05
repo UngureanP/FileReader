@@ -21,7 +21,10 @@ public class FileManager {
         try {
             service = Executors.newFixedThreadPool(listSize);
             for (Bid bid : bidList) {
-                service.submit(logBidInfo(bid));
+                service.submit(() -> {
+                    bid.setPl(decode(bid.getPl()));
+                    logger.info(bid);
+                });
             }
         } finally {
             if (service != null) {
@@ -36,10 +39,5 @@ public class FileManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private static Runnable logBidInfo(Bid bid) {
-        bid.setPl(decode(bid.getPl()));
-        return () -> logger.info(bid);
     }
 }
